@@ -1,0 +1,20 @@
+
+{
+  "private": true,
+  "scripts": {
+    "prepare": "lerna run prepare",
+    "rebuild:browser": "theia rebuild:browser",
+    "rebuild:electron": "theia rebuild:electron",
+    "publish:latest": "lerna publish --registry=https://registry.npmjs.org/ --exact --skip-git",
+    "update": "git pull origin master && git submodule foreach git pull origin master"
+  },
+  "devDependencies": {
+    "lerna": "latest",
+    "typescript": "latest"
+  },
+  "workspaces": [
+    "racket",
+    "browser-app",
+    "electron-app"
+  ]
+}

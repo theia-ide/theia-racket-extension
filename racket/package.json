@@ -1,0 +1,43 @@
+{
+  "name": "@theia/racket",
+  "version": "0.3.10",
+  "description": "Theia - Racket Extension",
+  "license": "Apache-2.0",
+  "keywords": [
+    "theia-extension"
+  ],
+  "dependencies": {
+    "@theia/core": "latest",
+    "@theia/editor": "latest",
+    "@theia/languages": "latest",
+    "@theia/monaco": "latest"
+  },
+  "devDependencies": {
+    "rimraf": "latest",
+    "typescript": "latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theia-ide/theia-racket-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theia-ide/theia-racket-extension/issues"
+  },
+  "homepage": "https://github.com/theia-ide/theia-racket-extension",
+  "files": [
+    "lib",
+    "src"
+  ],
+  "scripts": {
+    "prepare": "yarn run clean && yarn run build",
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "theiaExtensions": [
+    {
+      "frontend": "lib/browser/racket-frontend-module",
+      "backend": "lib/node/racket-backend-module"
+    }
+  ]
+}
