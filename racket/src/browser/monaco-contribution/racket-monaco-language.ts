@@ -23,9 +23,20 @@ export const configuration: monaco.languages.LanguageConfiguration = {
         { open: '"', close: '"' }
     ],
     indentationRules: {
+        // Never match
         decreaseIndentPattern: /.^/,
-        increaseIndentPattern: /^\s*\(.*[^)]\s*$/
-    }
+        increaseIndentPattern: /.^/
+    },
+    onEnterRules: [
+        {
+            // Always match
+            beforeText: /[^]?/,
+            action: {
+                indentAction: monaco.languages.IndentAction.None,
+                appendText: ''
+            },
+        }
+    ]
 };
 
 export const monarchLanguage = <monaco.languages.IMonarchLanguage>{

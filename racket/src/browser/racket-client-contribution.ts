@@ -7,8 +7,11 @@
  */
 
 import { injectable, inject } from 'inversify';
+import { EditorManager } from '@theia/editor/lib/browser';
+import { MonacoEditor } from '@theia/monaco/lib/browser/monaco-editor';
 import { BaseLanguageClientContribution, Workspace, Languages,
-         LanguageClientFactory } from '@theia/languages/lib/browser';
+         LanguageClientFactory,
+         TextEdit, Position } from '@theia/languages/lib/browser';
 import { RACKET_LANGUAGE_ID, RACKET_LANGUAGE_NAME } from '../common';
 
 @injectable()
@@ -21,9 +24,59 @@ export class RacketClientContribution extends BaseLanguageClientContribution {
         @inject(Workspace) protected readonly workspace: Workspace,
         @inject(Languages) protected readonly languages: Languages,
         @inject(LanguageClientFactory)
-        protected readonly languageClientFactory: LanguageClientFactory
+        protected readonly languageClientFactory: LanguageClientFactory,
+        @inject(EditorManager)
+        protected readonly editorManager: EditorManager
     ) {
         super(workspace, languages, languageClientFactory);
+
+        let languageClient = this.languageClient;
+
+        editorManager.onCurrentEditorChanged(() => {
+            if (!editorManager.currentEditor) {
+                return;
+            }
+            let monacoEditor = editorManager.currentEditor.editor as MonacoEditor;
+            if (monacoEditor.document.languageId !== RACKET_LANGUAGE_ID) {
+                return;
+            }
+            let editor = monacoEditor.getControl();
+            editor.onKeyUp((e) => {
+                if (e.keyCode == monaco.KeyCode.Enter) {
+                    return languageClient.then(client => {
+                        return client.sendRequest('racket/indentLine', {
+                            textDocument: {
+                                uri: editor.getModel().uri.toString()
+                            },
+                            line: editor.getPosition().lineNumber - 1
+                        }).then(
+                            (res) => {
+                                let {edit, cursor} = res as {
+                                    edit: TextEdit,
+                                    cursor: Position
+                                };
+                                editor.executeEdits("", [
+                                    {
+                                        range: new monaco.Range(
+                                            edit.range.start.line + 1,
+                                            edit.range.start.character + 1,
+                                            edit.range.end.line + 1,
+                                            edit.range.end.character + 1),
+                                        text: edit.newText
+                                    }
+                                ]);
+                                editor.setPosition({
+                                    lineNumber: cursor.line + 1,
+                                    column: cursor.character + 1
+                                });
+                            },
+                            (error) => {
+                                console.error(error);
+                            });
+                    });
+                }
+            });
+        });
     }
 
     protected get globPatterns() {
