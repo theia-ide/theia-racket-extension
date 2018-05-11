@@ -32,15 +32,11 @@ export class RacketClientContribution extends BaseLanguageClientContribution {
 
         let languageClient = this.languageClient;
 
-        editorManager.onCurrentEditorChanged(() => {
-            if (!editorManager.currentEditor) {
+        editorManager.onCreated((widget) => {
+            if (widget.editor.document.languageId !== RACKET_LANGUAGE_ID) {
                 return;
             }
-            let monacoEditor = editorManager.currentEditor.editor as MonacoEditor;
-            if (monacoEditor.document.languageId !== RACKET_LANGUAGE_ID) {
-                return;
-            }
-            let editor = monacoEditor.getControl();
+            let editor = (widget.editor as MonacoEditor).getControl();
             editor.onKeyUp((e) => {
                 if (e.keyCode == monaco.KeyCode.Enter) {
                     return languageClient.then(client => {
@@ -55,7 +51,7 @@ export class RacketClientContribution extends BaseLanguageClientContribution {
                                     edit: TextEdit,
                                     cursor: Position
                                 };
-                                editor.executeEdits("", [
+                                editor.executeEdits('racket/indentLine', [
                                     {
                                         range: new monaco.Range(
                                             edit.range.start.line + 1,
