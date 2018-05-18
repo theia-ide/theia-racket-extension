@@ -20,7 +20,7 @@ export class RacketContribution extends BaseLanguageServerContribution {
     start(clientConnection: IConnection): void {
         const command = 'racket';
         // FIXME
-        const args: string[] = ['/home/dvc/repos/racket-langserver/main.rkt'];
+        const args: string[] = ['/home/dvc/repos/racket-language-server/main.rkt'];
         const serverConnection =
             this.createProcessStreamConnection(command, args);
         this.forward(clientConnection, serverConnection);

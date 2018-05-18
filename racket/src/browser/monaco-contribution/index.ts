@@ -7,7 +7,7 @@
  */
 
 import { RACKET_LANGUAGE_ID, RACKET_LANGUAGE_NAME } from '../../common';
-import { configuration, monarchLanguage } from './racket-monaco-language';
+import { configuration } from './racket-monaco-language';
 
 monaco.languages.register({
     id: RACKET_LANGUAGE_ID,
@@ -18,5 +18,5 @@ monaco.languages.register({
 
 monaco.languages.onLanguage(RACKET_LANGUAGE_ID, () => {
     monaco.languages.setLanguageConfiguration(RACKET_LANGUAGE_ID, configuration);
-    monaco.languages.setMonarchTokensProvider(RACKET_LANGUAGE_ID, monarchLanguage);
+    //monaco.languages.setMonarchTokensProvider(RACKET_LANGUAGE_ID, monarchLanguage);
 });
