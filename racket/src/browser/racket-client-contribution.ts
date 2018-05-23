@@ -25,16 +25,10 @@ interface IRacketColorize {
     tokens: IToken[]
 }
 
-interface IRacketIndents {
-    uri: string,
-    indents: number[]
-}
-
 interface IRacketClientState {
     model: monaco.editor.ITextModel | undefined,
     decorations: string[],
-    deltaDecorations: monaco.editor.IModelDeltaDecoration[],
-    indents: number[]
+    deltaDecorations: monaco.editor.IModelDeltaDecoration[]
 }
 
 function getDecorationClassName(ty: string, mode: string) {
@@ -104,8 +98,7 @@ export class RacketClientContribution extends BaseLanguageClientContribution {
                 state[uri] = {
                     model: undefined,
                     decorations: [],
-                    deltaDecorations: [],
-                    indents: []
+                    deltaDecorations: []
                 };
             }
             return state[uri];
@@ -151,55 +144,51 @@ export class RacketClientContribution extends BaseLanguageClientContribution {
             }
             let editor = (widget.editor as MonacoEditor).getControl();
 
-            // Set indents when indents notification is received
-            languageClient.then(client => {
-                return client.onNotification('racket/indents', (res: IRacketIndents) => {
-                    getState(res.uri).indents = res.indents;
-                });
-            });
-
             // Handle colorization
             getState(editor.getModel().uri.toString()).model = editor.getModel();
 
             // Handle indent line on enter
-            /*editor.onKeyUp((e) => {
+            editor.onKeyUp((e) => {
                 if (e.keyCode == monaco.KeyCode.Enter) {
                     let position = editor.getPosition();
                     let model = editor.getModel();
                     let uri = model.uri.toString();
 
-                    let uriState = getState(uri);
-
-                    let indentation = 0;
-                    if (position.lineNumber - 1 < uriState.indents.length) {
-                        indentation = uriState.indents[position.lineNumber - 1];
-                    }
-
-                    let line = model.getLineContent(position.lineNumber);
-                    let trimmed = line.trimLeft();
-                    let oldIndentation = line.length - trimmed.length;
-                    let positionShift = indentation - oldIndentation;
-                    let newText = ' '.repeat(indentation)
-                        + line.trimLeft();
-                    let newPosition = editor.getPosition();
-                    editor.executeEdits('racket/indents', [
-                        {
-                            range: new monaco.Range(
-                                position.lineNumber,
-                                1,
-                                position.lineNumber,
-                                line.length + 1),
-                            text: newText
-                        }
-                    ]);
-                    if (newPosition.lineNumber == position.lineNumber) {
-                        editor.setPosition({
-                            lineNumber: newPosition.lineNumber,
-                            column: newPosition.column + positionShift,
-                        });
-                    }
+                    // Set indents when indents notification is received
+                    languageClient.then(client => {
+                        return client.sendRequest('racket/indent', {
+                            textDocument: { uri },
+                            line: position.lineNumber - 1
+                        }).then(
+                            (res) => {
+                                let indentation = res as number;
+                                let line = model.getLineContent(position.lineNumber);
+                                let trimmed = line.trimLeft();
+                                let oldIndentation = line.length - trimmed.length;
+                                let positionShift = indentation - oldIndentation;
+                                let newText = ' '.repeat(indentation)
+                                    + line.trimLeft();
+                                let newPosition = editor.getPosition();
+                                editor.executeEdits('racket/indents', [
+                                    {
+                                        range: new monaco.Range(
+                                            position.lineNumber,
+                                            1,
+                                            position.lineNumber,
+                                            line.length + 1),
+                                        text: newText
+                                    }
+                                ]);
+                                if (newPosition.lineNumber == position.lineNumber) {
+                                    editor.setPosition({
+                                        lineNumber: newPosition.lineNumber,
+                                        column: newPosition.column + positionShift,
+                                    });
+                                }
+                            });
+                    });
                 }
-            });*/
+            });
         });
     }
 

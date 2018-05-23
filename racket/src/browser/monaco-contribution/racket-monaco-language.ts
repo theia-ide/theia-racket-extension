@@ -43,47 +43,5 @@ export const monarchLanguage = <monaco.languages.IMonarchLanguage>{
     defaultToken: '',
     tokenPostfix: '.racket',
 
-    tokenizer: {
-        expression: [
-            { include: '@keyword' },
-            { include: '@number' },
-            { include: '@identifier' },
-            { include: '@string_double' },
-            { include: '@comment' },
-            { include: '@struct' },
-            { include: '@s_expression_name' }
-        ],
-
-        comment: [
-            [/;.*\n?/, 'comment.line']
-        ],
-
-        number: [
-            [/\b(0x[0-9a-f]+|[0-9]+(?:\.[0-9]+)?)\b/, 'number']
-        ],
-
-        identifier: [
-            [/\b\w(?:[^\s\(\)\[\]\.])+\b/, 'entity.name.function']
-        ],
-
-        struct: [
-            [/(\((?:\s)*)(struct)((?:\s)+)((?:[^\s(])+)((?:\s)*\()((?:[^\)])+)(\))/,
-             ['meta', 'keyword', 'meta', 'variable.parameter', 'meta',
-              'entity.name.function', 'meta']]
-        ],
-
-        s_expression_name: [
-            [/([\(\[\{])([^'"\:#\/\(\)\[\]0-9](?:[^\)\]\}\(\[\{\s])*)/,
-             ['meta', 'variable.parameter']]
-        ],
-
-        string_double: [
-            [/"(?:(?:\\"|[^"]))*"/, 'string.double']
-        ],
-
-        keyword: [
-            [/#(?:[^\s\(\)\[\]\.])+/, 'keyword']
-        ]
-
-    }
+    tokenizer: {}
 };
