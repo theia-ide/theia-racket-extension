@@ -10,11 +10,10 @@ npm install -g yarn
 ```
 
 Install the racket-language-server.
+```sh
+raco pkg install racket-language-server
 ```
-curl -LO https://github.com/theia-ide/racket-language-server/releases/download/v0.0.1/racket-language-server.tar.gz
-tar -xvf racket-language-server.tar.gz
-export PATH=$PATH:$PWD/bin
-```
+Make sure that `~/.racket/$RACKET-VERSION/bin` is on your PATH.
 
 Build.
 ```sh

@@ -26,16 +26,11 @@ export class RacketContribution extends BaseLanguageServerContribution {
 
     protected onDidFailSpawnProcess(error: Error): void {
         super.onDidFailSpawnProcess(error);
-        const url = 'https://github.com/theia-ide/racket-language-server/releases/download/';
-        const tag = 'v0.0.1';
-        const filename = 'racket-language-server.tar.gz';
         const message =
             'Error starting racket language server.\n' +
             'Please make sure it is installed on your system.\n' +
-            'Use the following commands:\n' +
-            '> curl -LO ' + url + tag + '/' + filename + '\n' +
-            '> tar -xvf racket-language-server.tar.gz' +
-            '> export PATH=$PATH:$PWD/bin';
+            'Use the following command:\n' +
+            '> raco pkg install racket-language-server\n';
         console.error(message);
     }
 }
