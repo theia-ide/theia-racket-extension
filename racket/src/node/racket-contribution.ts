@@ -18,20 +18,24 @@ export class RacketContribution extends BaseLanguageServerContribution {
     readonly name = RACKET_LANGUAGE_NAME;
 
     start(clientConnection: IConnection): void {
-        const command = 'racket';
-        // FIXME
-        const args: string[] = ['/home/dvc/repos/racket-language-server/main.rkt'];
+        const command = 'racket-language-server';
         const serverConnection =
-            this.createProcessStreamConnection(command, args);
+            this.createProcessStreamConnection(command, []);
         this.forward(clientConnection, serverConnection);
     }
 
     protected onDidFailSpawnProcess(error: Error): void {
         super.onDidFailSpawnProcess(error);
+        const url = 'https://github.com/theia-ide/racket-language-server/releases/download/';
+        const tag = 'v0.0.1';
+        const filename = 'racket-language-server.tar.gz';
         const message =
             'Error starting racket language server.\n' +
             'Please make sure it is installed on your system.\n' +
-            "Use the following command: 'raco pkg install racket-langserver'";
+            'Use the following commands:\n' +
+            '> curl -LO ' + url + tag + '/' + filename + '\n' +
+            '> tar -xvf racket-language-server.tar.gz' +
+            '> export PATH=$PATH:$PWD/bin';
         console.error(message);
     }
 }
