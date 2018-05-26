@@ -38,10 +38,3 @@ export const configuration: monaco.languages.LanguageConfiguration = {
         }
     ]
 };
-
-export const monarchLanguage = <monaco.languages.IMonarchLanguage>{
-    defaultToken: '',
-    tokenPostfix: '.racket',
-
-    tokenizer: {}
-};
