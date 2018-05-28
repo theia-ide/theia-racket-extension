@@ -34,10 +34,7 @@ interface IRacketClientState {
 function getDecorationClassName(ty: string, mode: string) {
     switch (ty) {
         case 'symbol':
-            if (mode == 'scribble') {
-                return 'mtk4';
-            }
-            return 'mtk1';
+            return 'mtk4';
         case 'keyword':
         case 'hash-colon-keyword':
         case 'other':
